@@ -13,14 +13,16 @@
       font-family: 'Segoe UI', system-ui, sans-serif;
       background: #0f1923;
       color: #f0ece4;
-      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
     }
 
     .slideshow {
       width: 100vw;
-      height: 100vh;
+      height: 100dvh;
       position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
     .slide {
@@ -39,6 +41,8 @@
       align-items: center;
       justify-content: space-between;
       flex-shrink: 0;
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .day-badge {
@@ -68,6 +72,59 @@
       white-space: nowrap;
     }
 
+    /* Weather strip */
+    .weather-strip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 20px;
+      background: rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      min-height: 36px;
+    }
+
+    .weather-icon { font-size: 20px; line-height: 1; }
+
+    .weather-temps {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .weather-high {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffd580;
+    }
+    .weather-low {
+      font-size: 12px;
+      color: rgba(255,255,255,0.45);
+    }
+    .weather-desc {
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      margin-left: 2px;
+    }
+    .weather-details {
+      display: flex;
+      gap: 10px;
+      margin-left: auto;
+    }
+    .weather-detail {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .weather-detail strong { color: rgba(255,255,255,0.75); }
+    .weather-loading {
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      font-style: italic;
+    }
+
     .slide-body {
       display: flex;
       flex: 1;
@@ -81,6 +138,50 @@
       position: relative;
     }
 
+    @media (max-width: 767px) {
+      .slide-header {
+        padding: 10px 14px 8px;
+      }
+      .slide-title {
+        font-size: 14px;
+        padding: 0 8px;
+      }
+      .slide-date {
+        font-size: 11px;
+        min-width: auto;
+      }
+      .slide-body {
+        flex-direction: column;
+      }
+      .map-panel {
+        width: 100%;
+        height: 38dvh;
+        flex-shrink: 0;
+      }
+      .schedule-panel {
+        padding: 10px 14px 20px 14px;
+      }
+      .cover-emoji { font-size: 36px; }
+      .cover-title { font-size: 24px; letter-spacing: -0.5px; }
+      .cover-sub { font-size: 13px; }
+      .cover-dates { font-size: 11px; }
+      .cover-slide { padding: 24px 16px 52px; gap: 10px; }
+      .cover-pill { font-size: 11px; padding: 4px 12px; }
+      .stats-strip {
+        flex-wrap: wrap;
+        gap: 2px;
+        padding: 6px 10px 56px;
+      }
+      .stat-item {
+        padding: 0 6px;
+        font-size: 10px;
+      }
+      .nav-btn {
+        padding: 6px 14px;
+        font-size: 11px;
+      }
+    }
+
     .map-panel .leaflet-map {
       width: 100%;
       height: 100%;
@@ -91,28 +192,38 @@
       bottom: 10px;
       left: 10px;
       z-index: 1000;
-      background: rgba(15,25,35,0.82);
-      color: #fff;
+      background: rgba(255,255,255,0.88);
+      color: #222;
       font-size: 11px;
       font-weight: 600;
       padding: 4px 10px;
       border-radius: 4px;
       pointer-events: none;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
     }
 
     /* Schedule panel */
     .schedule-panel {
       flex: 1;
       overflow-y: auto;
-      padding: 14px 24px 60px 20px;
+      padding: 14px 24px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0;
     }
     .schedule-panel::-webkit-scrollbar { width: 4px; }
     .schedule-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 2px; }
 
+    /* When content overflows (scrollable), revert centering so it starts from top */
+    .schedule-panel.overflowing {
+      justify-content: flex-start;
+    }
+
     .sched-row {
       display: flex;
       gap: 12px;
-      padding: 8px 0;
+      padding: 9px 0;
       border-bottom: 1px solid rgba(255,255,255,0.07);
       align-items: flex-start;
     }
@@ -174,7 +285,7 @@
     .stats-strip {
       display: flex;
       gap: 4px;
-      padding: 8px 20px;
+      padding: 8px 20px 60px;
       background: rgba(255,255,255,0.04);
       border-top: 1px solid rgba(255,255,255,0.07);
       flex-shrink: 0;
@@ -194,13 +305,18 @@
 
     /* Nav */
     .nav {
-      position: fixed;
-      bottom: 16px;
-      left: 50%;
-      transform: translateX(-50%);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 12px;
+      padding: 10px 16px;
+      background: rgba(15,25,35,0.85);
+      backdrop-filter: blur(6px);
+      border-top: 1px solid rgba(255,255,255,0.1);
       z-index: 9999;
     }
 
@@ -231,11 +347,30 @@
 
     /* Cover */
     .cover-slide {
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      justify-content: center;
+      position: relative;
+      background: url('group_pic.jpeg') center center / cover no-repeat;
+      justify-content: flex-start;
       align-items: center;
       text-align: center;
-      gap: 18px;
+      gap: 14px;
+      padding: 36px 24px 52px;
+    }
+    .cover-slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,20,30,0.80) 0%,
+        rgba(10,20,30,0.55) 45%,
+        rgba(10,20,30,0.15) 70%,
+        rgba(10,20,30,0.0) 100%
+      );
+      z-index: 0;
+    }
+    .cover-slide > * {
+      position: relative;
+      z-index: 1;
     }
     .cover-emoji { font-size: 60px; }
     .cover-title { font-size: 40px; font-weight: 800; line-height: 1.15; letter-spacing: -1px; }
@@ -243,6 +378,115 @@
     .cover-dates { font-size: 14px; opacity: 0.45; letter-spacing: 1px; }
     .cover-pills { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
     .cover-pill { padding: 5px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.22); font-size: 12px; opacity: 0.8; }
+
+    /* Prep slide */
+    .prep-slide {
+      background: #0f1923;
+      flex-direction: column;
+    }
+    .prep-slide .slide-header {
+      background: linear-gradient(90deg,#1a2a1a,#0f1923);
+      border-bottom: 2px solid #4a8a5a;
+    }
+    .prep-slide .day-badge { background: #3a6a4a; }
+
+    .prep-body {
+      flex: 1;
+      display: flex;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    .prep-col {
+      flex: 1;
+      overflow-y: auto;
+      border-right: 1px solid rgba(255,255,255,0.07);
+    }
+    .prep-col:last-child { border-right: none; }
+    .prep-col::-webkit-scrollbar { width: 4px; }
+    .prep-col::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 2px; }
+
+    .prep-section-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin: 14px 0 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .prep-section-title:first-child { margin-top: 0; }
+
+    .prep-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .prep-item:last-child { border-bottom: none; }
+    .prep-item-icon { font-size: 13px; min-width: 18px; flex-shrink: 0; margin-top: 1px; }
+    .prep-item-text { flex: 1; }
+    .prep-item-text strong { color: #f0ece4; font-weight: 600; display: block; }
+    .prep-item-text span { color: rgba(255,255,255,0.5); font-size: 11px; }
+
+    .res-badge {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .res-required { background: #6b1a1a; color: #ffaaaa; }
+    .res-recommended { background: #4a3a1a; color: #ffd899; }
+    .res-walkup { background: #1a3a1a; color: #a8f0bc; }
+
+    @media (max-width: 767px) {
+      .prep-body { flex-direction: column; }
+      .prep-col { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); padding: 0; }
+      .prep-col:last-child { border-bottom: none; }
+
+      .prep-col-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        cursor: pointer;
+        user-select: none;
+        background: rgba(255,255,255,0.03);
+      }
+      .prep-col-header:active { background: rgba(255,255,255,0.07); }
+      .prep-col-title {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.75);
+      }
+      .prep-col-chevron {
+        font-size: 12px;
+        color: rgba(255,255,255,0.4);
+        transition: transform 0.25s;
+      }
+      .prep-col.expanded .prep-col-chevron { transform: rotate(180deg); }
+      .prep-col-content {
+        display: none;
+        padding: 10px 14px 14px;
+        overflow-y: auto;
+      }
+      .prep-col.expanded .prep-col-content { display: block; }
+    }
+
+    @media (min-width: 768px) {
+      .prep-col-header { display: none; }
+      .prep-col-content { display: block; padding: 14px 20px 20px; }
+    }
 
     /* Day color themes */
     .day1 .slide-header { background: linear-gradient(90deg,#1a3a2a,#0f1923); border-bottom: 2px solid #2d6a4f; }
@@ -267,9 +511,9 @@
       border-radius: 50%;
       font-size: 17px;
       line-height: 1;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.7);
-      border: 2px solid rgba(255,255,255,0.35);
-      background: rgba(20,30,40,0.88);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+      border: 2px solid rgba(0,0,0,0.2);
+      background: rgba(255,255,255,0.9);
     }
     .map-marker span { display: block; }
   </style>
@@ -292,6 +536,223 @@
     </div>
   </div>
 
+  <!-- ══ PREP ══════════════════════════════════════════════ -->
+  <div class="slide prep-slide">
+    <div class="slide-header">
+      <div class="day-badge">Pre-Trip</div>
+      <div class="slide-title">Reservations & What to Pack</div>
+      <div class="slide-date">Before May 13</div>
+    </div>
+    <div class="prep-body">
+
+      <!-- LEFT: Entry & Passes first, then Reservations -->
+      <div class="prep-col expanded" id="prepColLeft">
+        <div class="prep-col-header" onclick="togglePrepCol('prepColLeft')">
+          <span class="prep-col-title">🎟️ Entry & Passes · 📋 Reservations</span>
+          <span class="prep-col-chevron">▼</span>
+        </div>
+        <div class="prep-col-content">
+
+        <div class="prep-section-title">🎟️ Entry & Passes</div>
+
+        <div class="prep-item">
+          <div class="prep-item-icon">🏛️</div>
+          <div class="prep-item-text">
+            <strong>America the Beautiful Annual Pass — $80</strong>
+            <span>Covers both Yellowstone + Grand Teton entry ($35 each) · Saves $-10 for 2 parks · Buy at recreation.gov</span>
+          </div>
+          <div class="res-badge res-recommended">Save Money</div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-item-icon">🚫</div>
+          <div class="prep-item-text">
+            <strong>No Timed Entry Permits Required (2026)</strong>
+            <span>Neither Yellowstone nor Grand Teton requires advance timed-entry permits — drive-up access at gates</span>
+          </div>
+          <div class="res-badge res-walkup">No Permit</div>
+        </div>
+
+        <div class="prep-section-title">📋 Reservations to Make Now</div>
+
+        <div class="prep-item">
+          <div class="prep-item-icon">🍽️</div>
+          <div class="prep-item-text">
+            <strong>Old Faithful Inn — Dinner (Day 3)</strong>
+            <span>Call 307-344-7311 · up to 60 days ahead for lodge guests · same-day walk-up possible but risky</span>
+          </div>
+          <div class="res-badge res-required">Book Now</div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-item-icon">🍽️</div>
+          <div class="prep-item-text">
+            <strong>Canyon Lodge Dining — Dinner (Day 1)</strong>
+            <span>Walk-up only · No reservations · Opens May 15 · Arrive early or have backup</span>
+          </div>
+          <div class="res-badge res-walkup">Walk-up</div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-item-icon">⛴️</div>
+          <div class="prep-item-text">
+            <strong>Jenny Lake Ferry (Day 4)</strong>
+            <span>No reservations · First-come first-served · Opens May 15 · 9 AM–5 PM · $10 RT · Arrive early</span>
+          </div>
+          <div class="res-badge res-walkup">Walk-up</div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-item-icon">🍽️</div>
+          <div class="prep-item-text">
+            <strong>Colter Bay / Jackson Lake Lodge Dining (Day 4)</strong>
+            <span>Mural Room at Jackson Lake Lodge — book via OpenTable · Reopens April 2026</span>
+          </div>
+          <div class="res-badge res-recommended">Recommended</div>
+        </div>
+
+        <div class="prep-section-title">📱 Apps to Download Offline</div>
+
+        <div class="prep-item">
+          <div class="prep-item-icon">📲</div>
+          <div class="prep-item-text">
+            <strong>NPS App — Download offline maps</strong>
+            <span>Cell service is spotty inside both parks · Download Yellowstone + Grand Teton maps before leaving</span>
+          </div>
+          <div class="res-badge res-required">Do This</div>
+        </div>
+
+        <div class="prep-item">
+          <div class="prep-item-icon">🌡️</div>
+          <div class="prep-item-text">
+            <strong>Check nps.gov/yell road conditions</strong>
+            <span>Dunraven Pass (Day 2) may be closed by snow in early May · Check morning of Day 2</span>
+          </div>
+          <div class="res-badge res-recommended">Monitor</div>
+        </div>
+
+        </div><!-- /prep-col-content -->
+      </div>
+
+      <!-- RIGHT: Packing -->
+      <div class="prep-col" id="prepColRight">
+        <div class="prep-col-header" onclick="togglePrepCol('prepColRight')">
+          <span class="prep-col-title">🧥 What to Pack</span>
+          <span class="prep-col-chevron">▼</span>
+        </div>
+        <div class="prep-col-content">
+        <div class="prep-section-title">🧥 Clothing (May = Unpredictable)</div>
+
+        <div class="prep-item">
+          <div class="prep-item-icon">🧥</div>
+          <div class="prep-item-text">
+            <strong>Waterproof shell jacket</strong>
+            <span>Wind + rain + snow possible every day · Non-negotiable</span>
+          </div>
+        </div>
+        <div class="prep-item">
+          <div class="prep-item-icon">🧤</div>
+          <div class="prep-item-text">
+            <strong>Gloves + warm hat + fleece layer</strong>
+            <span>Nighttime temps can drop below freezing · Summit of Washburn ~35°F</span>
+          </div>
+        </div>
+        <div class="prep-item">
+          <div class="prep-item-icon">👖</div>
+          <div class="prep-item-text">
+            <strong>Waterproof pants or rain pants</strong>
+            <span>Snowmelt makes trails muddy · Especially Fairy Falls, Taggart Lake</span>
+          </div>
+        </div>
+        <div class="prep-item">
+          <div class="prep-item-icon">👟</div>
+          <div class="prep-item-text">
+            <strong>Waterproof hiking boots or trail runners</strong>
+            <span>Mud season peaks in May · Regular sneakers will be soaked within 30 min</span>
+          </div>
+        </div>
+
+        <div class="prep-section-title">☀️ Sun & Safety</div>
+
+        <div class="prep-item">
+          <div class="prep-item-icon">🧴</div>
+          <div class="prep-item-text">
+            <strong>SPF 50+ sunscreen + SPF lip balm</strong>
+            <span>High elevation = intense UV even on cloudy days · Reapply every 2 hrs</span>
+          </div>
+        </div>
+        <div class="prep-item">
+          <div class="prep-item-icon">🕶️</div>
+          <div class="prep-item-text">
+            <strong>Polarized sunglasses</strong>
+            <span>Snow glare + bright skies · Essential on Washburn summit</span>
+          </div>
+        </div>
+        <div class="prep-item">
+          <div class="prep-item-icon">🦟</div>
+          <div class="prep-item-text">
+            <strong>DEET insect repellent</strong>
+            <span>Mosquitoes peak in May especially near thermal areas and lakeshores</span>
+          </div>
+        </div>
+
+        <div class="prep-section-title">🎒 Gear & Essentials</div>
+
+        <div class="prep-item">
+          <div class="prep-item-icon">🎒</div>
+          <div class="prep-item-text">
+            <strong>Daypack (20–25L)</strong>
+            <span>For layers, water, snacks, sunscreen · Every hike needs one</span>
+          </div>
+        </div>
+        <div class="prep-item">
+          <div class="prep-item-icon">💧</div>
+          <div class="prep-item-text">
+            <strong>Reusable water bottle (2L+)</strong>
+            <span>High altitude dehydrates fast · Refill at visitor centers</span>
+          </div>
+        </div>
+        <div class="prep-item">
+          <div class="prep-item-icon">🔭</div>
+          <div class="prep-item-text">
+            <strong>Binoculars</strong>
+            <span>Bears, wolves, bison, moose — all more visible from distance. 8×42 minimum</span>
+          </div>
+        </div>
+        <div class="prep-item">
+          <div class="prep-item-icon">🍫</div>
+          <div class="prep-item-text">
+            <strong>Snacks / trail food</strong>
+            <span>Limited food options mid-park · Pack lunch for Days 2 & 3 from hotel in the morning</span>
+          </div>
+        </div>
+        <div class="prep-item">
+          <div class="prep-item-icon">🔋</div>
+          <div class="prep-item-text">
+            <strong>Portable charger / power bank</strong>
+            <span>Long days with GPS, photos, NPS app · Dead phone = no maps in dead zones</span>
+          </div>
+        </div>
+        <div class="prep-item">
+          <div class="prep-item-icon">💊</div>
+          <div class="prep-item-text">
+            <strong>Ibuprofen / altitude headache meds</strong>
+            <span>Elevations hit 8,000–9,000 ft · Headaches common first day · Stay hydrated</span>
+          </div>
+        </div>
+
+        </div><!-- /prep-col-content -->
+      </div>
+
+    </div>
+    <div class="stats-strip">
+      <div class="stat-item">📋 <strong>1</strong> booking required</div>
+      <div class="stat-item">💰 <strong>$80</strong> saves $-10 with annual pass</div>
+      <div class="stat-item">🎟️ <strong>No</strong> timed entry permits</div>
+      <div class="stat-item">📲 <strong>Download</strong> NPS app offline maps</div>
+    </div>
+  </div>
+
   <!-- ══ DAY 1 ═══════════════════════════════════════════ -->
   <div class="slide day1">
     <div class="slide-header">
@@ -299,6 +760,7 @@
       <div class="slide-title">Bozeman → Northeast Loop → Gardiner</div>
       <div class="slide-date">Wed, May 13</div>
     </div>
+    <div class="weather-strip" id="weather1"><span class="weather-loading">Loading weather…</span></div>
     <div class="slide-body">
       <div class="map-panel">
         <div id="map1" class="leaflet-map"></div>
@@ -327,35 +789,39 @@
         </div>
         <div class="sched-row">
           <div class="sched-time">4:15 PM</div><div class="sched-icon">💧</div>
-          <div class="sched-content"><div class="sched-name">Tower Fall</div><div class="sched-note">Short walk to viewpoint · 0.4 mi RT · 30 min</div><span class="tag tag-scenic">Waterfall</span></div>
+          <div class="sched-content"><div class="sched-name">Tower Fall</div><div class="sched-note">Short walk to viewpoint · 0.4 mi RT · 15 min</div><span class="tag tag-scenic">Waterfall</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">5:00 PM</div><div class="sched-icon">🏞️</div>
-          <div class="sched-content"><div class="sched-name">Grand Canyon of Yellowstone — North Rim</div><div class="sched-note">Lookout Point · Inspiration Point · Grand View · 1.5 hrs · Golden hour light</div><span class="tag tag-scenic">Must See</span></div>
+          <div class="sched-time">4:30 PM</div><div class="sched-icon">🥾</div>
+          <div class="sched-content"><div class="sched-name">Brink of the Lower Falls Hike</div><div class="sched-note">0.8 mi RT · 45 min · Steep descent to base of 308-ft waterfall · Most dramatic falls view in Yellowstone</div><span class="tag tag-hike">0.8 mi RT</span><span class="tag tag-hike">Falls hike</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">6:30 PM</div><div class="sched-icon">🍽️</div>
+          <div class="sched-time">5:15 PM</div><div class="sched-icon">🏞️</div>
+          <div class="sched-content"><div class="sched-name">Grand Canyon of Yellowstone — North Rim</div><div class="sched-note">Lookout Point · Inspiration Point · Grand View · 1 hr · Golden hour light</div><span class="tag tag-scenic">Must See</span></div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-time">6:15 PM</div><div class="sched-icon">🍽️</div>
           <div class="sched-content"><div class="sched-name">Dinner — Canyon Village</div><div class="sched-note">Canyon Lodge dining room · inside park</div><span class="tag tag-food">Dinner</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">7:30 PM</div><div class="sched-icon">🌋</div>
+          <div class="sched-time">7:15 PM</div><div class="sched-icon">🌋</div>
           <div class="sched-content"><div class="sched-name">Mud Volcano</div><div class="sched-note">Dragon's Mouth Spring · Mud Caldron · 0.7 mi boardwalk · 30–40 min</div><span class="tag tag-scenic">Thermal</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">8:15 PM</div><div class="sched-icon">🚗</div>
+          <div class="sched-time">8:00 PM</div><div class="sched-icon">🚗</div>
           <div class="sched-content"><div class="sched-name">Drive back to Gardiner</div><div class="sched-note">~1.5 hr via Tower/Mammoth route</div><span class="tag tag-drive">1.5 hr</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">9:45 PM</div><div class="sched-icon">🏨</div>
-          <div class="sched-content"><div class="sched-name">Check in — Yellowstone Village Inn, Gardiner</div><div class="sched-note">Rest up for early Day 2 start</div><span class="tag tag-hotel">Check-in</span></div>
+          <div class="sched-time">9:30 PM</div><div class="sched-icon">🏨</div>
+          <div class="sched-content"><div class="sched-name">Check in — Yellowstone Village Inn, Gardiner</div><div class="sched-note">Rest up for Day 2</div><span class="tag tag-hotel">Check-in</span></div>
         </div>
         <div class="alert-box">⚠️ May snow possible at elevation — check nps.gov/yell road conditions morning of Day 2</div>
       </div>
     </div>
     <div class="stats-strip">
       <div class="stat-item">🚗 <strong>~3.5 hrs</strong> driving</div>
-      <div class="stat-item">🥾 <strong>~2 mi</strong> walking</div>
-      <div class="stat-item">📍 <strong>6</strong> stops</div>
+      <div class="stat-item">🥾 <strong>~1.5 mi</strong> hiking</div>
+      <div class="stat-item">📍 <strong>7</strong> stops</div>
       <div class="stat-item">🛏️ Sleep: <strong>Gardiner, MT</strong></div>
     </div>
   </div>
@@ -367,6 +833,7 @@
       <div class="slide-title">Mt. Washburn Hike → Norris Basin → West Yellowstone</div>
       <div class="slide-date">Thu, May 14</div>
     </div>
+    <div class="weather-strip" id="weather2"><span class="weather-loading">Loading weather…</span></div>
     <div class="slide-body">
       <div class="map-panel">
         <div id="map2" class="leaflet-map"></div>
@@ -374,47 +841,47 @@
       </div>
       <div class="schedule-panel">
         <div class="sched-row">
-          <div class="sched-time">7:00 AM</div><div class="sched-icon">🚗</div>
-          <div class="sched-content"><div class="sched-name">Depart Gardiner</div><div class="sched-note">Early start essential for Washburn hike</div><span class="tag tag-drive">Early start</span></div>
+          <div class="sched-time">8:00 AM</div><div class="sched-icon">☕</div>
+          <div class="sched-content"><div class="sched-name">Morning coffee — Gardiner</div><div class="sched-note">Grab breakfast + pack lunch before heading out</div><span class="tag tag-food">Slow start</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">7:45 AM</div><div class="sched-icon">⛰️</div>
+          <div class="sched-time">9:00 AM</div><div class="sched-icon">🚗</div>
+          <div class="sched-content"><div class="sched-name">Depart Gardiner</div><div class="sched-note">South toward Canyon Junction · ~1 hr drive</div><span class="tag tag-drive">1 hr drive</span></div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-time">9:45 AM</div><div class="sched-icon">⛰️</div>
           <div class="sched-content"><div class="sched-name">Dunraven Pass</div><div class="sched-note">Highest paved road in Yellowstone · 8,859 ft · 5 min scenic stop</div><span class="tag tag-scenic">8,859 ft</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">8:00 AM</div><div class="sched-icon">🥾</div>
+          <div class="sched-time">10:00 AM</div><div class="sched-icon">🥾</div>
           <div class="sched-content"><div class="sched-name">Mt. Washburn Hike</div><div class="sched-note">6.4 mi RT · 3–3.5 hrs · Panoramic summit views · Bighorn sheep & bears frequent</div><span class="tag tag-hike">6.4 mi RT</span><span class="tag tag-hike">3–3.5 hrs</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">11:30 AM</div><div class="sched-icon">🚗</div>
-          <div class="sched-content"><div class="sched-name">Drive northwest toward Mammoth</div><div class="sched-note">~45 min · Pack lunch from Gardiner morning</div></div>
+          <div class="sched-time">1:30 PM</div><div class="sched-icon">🚗</div>
+          <div class="sched-content"><div class="sched-name">Drive southwest toward Norris</div><div class="sched-note">~35 min via Canyon Junction</div><span class="tag tag-drive">35 min</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">12:15 PM</div><div class="sched-icon">♨️</div>
-          <div class="sched-content"><div class="sched-name">Mammoth Hot Springs — Upper Terrace Drive</div><div class="sched-note">30 min scenic drive · Only if not fully explored Day 1</div><span class="tag tag-scenic">Optional</span></div>
-        </div>
-        <div class="sched-row">
-          <div class="sched-time">12:45 PM</div><div class="sched-icon">💨</div>
+          <div class="sched-time">2:05 PM</div><div class="sched-icon">💨</div>
           <div class="sched-content"><div class="sched-name">Roaring Mountain</div><div class="sched-note">Steaming fumarole hillside · Eerie & dramatic · 15 min</div><span class="tag tag-scenic">Quick stop</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">1:15 PM</div><div class="sched-icon">🌡️</div>
-          <div class="sched-content"><div class="sched-name">Norris Geyser Basin</div><div class="sched-note">Oldest & hottest basin · Porcelain Basin + Back Basin · Steamboat Geyser · 1.5 hrs</div><span class="tag tag-scenic">Must See</span></div>
-        </div>
-        <div class="sched-row">
-          <div class="sched-time">2:45 PM</div><div class="sched-icon">🍱</div>
+          <div class="sched-time">2:30 PM</div><div class="sched-icon">🍱</div>
           <div class="sched-content"><div class="sched-name">Lunch — Norris Picnic Area</div><div class="sched-note">Pack from Gardiner hotel morning</div><span class="tag tag-food">Picnic</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">3:15 PM</div><div class="sched-icon">💧</div>
+          <div class="sched-time">3:00 PM</div><div class="sched-icon">🌡️</div>
+          <div class="sched-content"><div class="sched-name">Norris Geyser Basin</div><div class="sched-note">Oldest & hottest basin · Porcelain Basin + Back Basin · Steamboat Geyser · 1.5 hrs</div><span class="tag tag-scenic">Must See</span></div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-time">4:30 PM</div><div class="sched-icon">💧</div>
           <div class="sched-content"><div class="sched-name">Gibbon Falls</div><div class="sched-note">84-ft waterfall · Easy roadside stop · 20 min</div><span class="tag tag-scenic">Waterfall</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">3:45 PM</div><div class="sched-icon">🚗</div>
+          <div class="sched-time">5:00 PM</div><div class="sched-icon">🚗</div>
           <div class="sched-content"><div class="sched-name">Drive to West Yellowstone</div><div class="sched-note">~45 min via Madison Junction</div><span class="tag tag-drive">45 min</span></div>
         </div>
         <div class="sched-row">
-          <div class="sched-time">4:30 PM</div><div class="sched-icon">🏨</div>
+          <div class="sched-time">5:45 PM</div><div class="sched-icon">🏨</div>
           <div class="sched-content"><div class="sched-name">Check in — West Yellowstone</div><div class="sched-note">Dinner in town · Multiple restaurants available</div><span class="tag tag-hotel">Check-in</span></div>
         </div>
         <div class="alert-box">⚠️ If Dunraven Pass closed due to snow — skip Washburn, add Solfatara Creek Trail near Norris (4 mi RT) instead</div>
@@ -423,7 +890,7 @@
     <div class="stats-strip">
       <div class="stat-item">🚗 <strong>~2.5 hrs</strong> driving</div>
       <div class="stat-item">🥾 <strong>6.4 mi</strong> Mt. Washburn</div>
-      <div class="stat-item">📍 <strong>6</strong> stops</div>
+      <div class="stat-item">📍 <strong>5</strong> stops</div>
       <div class="stat-item">🛏️ Sleep: <strong>West Yellowstone, MT</strong></div>
     </div>
   </div>
@@ -435,6 +902,7 @@
       <div class="slide-title">Geyser Country — Grand Prismatic → Old Faithful</div>
       <div class="slide-date">Fri, May 15</div>
     </div>
+    <div class="weather-strip" id="weather3"><span class="weather-loading">Loading weather…</span></div>
     <div class="slide-body">
       <div class="map-panel">
         <div id="map3" class="leaflet-map"></div>
@@ -494,6 +962,7 @@
       <div class="slide-title">West Yellowstone → Grand Teton → Jackson</div>
       <div class="slide-date">Sat, May 16</div>
     </div>
+    <div class="weather-strip" id="weather4"><span class="weather-loading">Loading weather…</span></div>
     <div class="slide-body">
       <div class="map-panel">
         <div id="map4" class="leaflet-map"></div>
@@ -553,6 +1022,7 @@
       <div class="slide-title">Grand Teton Morning → Jackson Hole Airport</div>
       <div class="slide-date">Sun, May 17 · ✈️ 6:00 PM Departure</div>
     </div>
+    <div class="weather-strip" id="weather5"><span class="weather-loading">Loading weather…</span></div>
     <div class="slide-body">
       <div class="map-panel">
         <div id="map5" class="leaflet-map"></div>
@@ -613,15 +1083,30 @@
     </div>
   </div>
 
+  <div class="nav">
+    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+    <div class="nav-dots" id="dots"></div>
+    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+  </div>
+
 </div><!-- /slideshow -->
 
-<div class="nav">
-  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
-  <div class="nav-dots" id="dots"></div>
-  <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
-</div>
-
 <script>
+// ── Schedule panel vertical centering ────────────────────
+function updateScheduleOverflow() {
+  document.querySelectorAll('.schedule-panel').forEach(panel => {
+    panel.classList.toggle('overflowing', panel.scrollHeight > panel.clientHeight + 2);
+  });
+}
+window.addEventListener('resize', updateScheduleOverflow);
+
+// ── Prep col expand/collapse (mobile) ────────────────────
+function togglePrepCol(id) {
+  const col = document.getElementById(id);
+  if (!col) return;
+  col.classList.toggle('expanded');
+}
+
 // ── Slide navigation ─────────────────────────────────────
 const slides = document.querySelectorAll('.slide');
 const dotsContainer = document.getElementById('dots');
@@ -643,8 +1128,13 @@ function goTo(n) {
   dotsContainer.children[current].classList.add('active');
   document.getElementById('prevBtn').disabled = current === 0;
   document.getElementById('nextBtn').disabled = current === slides.length - 1;
-  // Init map on first visit to that slide
-  setTimeout(() => initMap(current), 80);
+  // Init map + weather on first visit to that slide
+  setTimeout(() => {
+    const dayNum = current - 1; // slide 0=cover,1=prep,2=day1..6=day5
+    initMap(current);
+    if (dayNum >= 1 && dayNum <= 5) loadWeather(dayNum);
+    updateScheduleOverflow();
+  }, 80);
 }
 
 function changeSlide(dir) {
@@ -675,13 +1165,12 @@ const DAY_MAPS = {
     ]
   },
   2: {
-    center: [44.82, -110.62],
+    center: [44.75, -110.75],
     zoom: 9,
     color: '#8a4db5',
     stops: [
       { lat: 45.038, lng: -110.718, icon: '🏨',  name: 'Gardiner (start)' },
       { lat: 44.785, lng: -110.454, icon: '⛰️',  name: 'Dunraven Pass / Mt. Washburn' },
-      { lat: 44.971, lng: -110.703, icon: '♨️',  name: 'Mammoth (optional)' },
       { lat: 44.780, lng: -110.737, icon: '💨',  name: 'Roaring Mountain' },
       { lat: 44.726, lng: -110.704, icon: '🌡️',  name: 'Norris Geyser Basin' },
       { lat: 44.654, lng: -110.771, icon: '💧',  name: 'Gibbon Falls' },
@@ -732,7 +1221,8 @@ const DAY_MAPS = {
 };
 
 function initMap(slideIndex) {
-  const dayNum = slideIndex; // slide 0=cover, 1=day1...5=day5
+  // slide 0=cover, 1=prep, 2=day1 ... 6=day5
+  const dayNum = slideIndex - 1; // shift: prep slide added at index 1
   if (dayNum < 1 || dayNum > 5) return;
   if (mapsInitialized[dayNum]) return;
   mapsInitialized[dayNum] = true;
@@ -748,8 +1238,8 @@ function initMap(slideIndex) {
     attributionControl: false
   });
 
-  // Dark-ish OSM tile layer (CartoDB Dark Matter)
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  // CartoDB Voyager — light, colorful, no API key needed
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     maxZoom: 19,
     subdomains: 'abcd'
   }).addTo(map);
@@ -777,10 +1267,91 @@ function initMap(slideIndex) {
       .addTo(map)
       .bindPopup(`<strong>${stop.icon} ${stop.name}</strong>`, { maxWidth: 200 });
   });
+
+  // Ensure Leaflet recalculates container size after slide transition
+  setTimeout(() => {
+    map.invalidateSize();
+    map.setView(cfg.center, cfg.zoom);
+  }, 120);
 }
 
 // Init map for first day slide if user lands there (cover is slide 0)
 // Maps init lazily on goTo()
+updateScheduleOverflow();
+
+// ── Weather ───────────────────────────────────────────────
+const WMO_ICONS = {
+  0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️',
+  45:'🌫️', 48:'🌫️',
+  51:'🌦️', 53:'🌦️', 55:'🌧️',
+  61:'🌧️', 63:'🌧️', 65:'🌧️',
+  71:'❄️', 73:'❄️', 75:'❄️', 77:'🌨️',
+  80:'🌦️', 81:'🌧️', 82:'⛈️',
+  85:'🌨️', 86:'❄️',
+  95:'⛈️', 96:'⛈️', 99:'⛈️'
+};
+const WMO_DESC = {
+  0:'Clear sky', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
+  45:'Foggy', 48:'Icy fog',
+  51:'Light drizzle', 53:'Drizzle', 55:'Heavy drizzle',
+  61:'Light rain', 63:'Rain', 65:'Heavy rain',
+  71:'Light snow', 73:'Snow', 75:'Heavy snow', 77:'Snow grains',
+  80:'Rain showers', 81:'Rain showers', 82:'Violent showers',
+  85:'Snow showers', 86:'Heavy snow showers',
+  95:'Thunderstorm', 96:'Thunderstorm + hail', 99:'Thunderstorm + hail'
+};
+
+// Day config: date + representative lat/lng for weather lookup
+const DAY_WEATHER = {
+  1: { date: '2026-05-13', lat: 44.85,  lng: -110.55,  loc: 'Yellowstone · Gardiner area' },
+  2: { date: '2026-05-14', lat: 44.78,  lng: -110.46,  loc: 'Mt. Washburn · 8,859 ft' },
+  3: { date: '2026-05-15', lat: 44.46,  lng: -110.83,  loc: 'Old Faithful area' },
+  4: { date: '2026-05-16', lat: 43.87,  lng: -110.60,  loc: 'Grand Teton · Colter Bay' },
+  5: { date: '2026-05-17', lat: 43.65,  lng: -110.70,  loc: 'Jackson, WY' }
+};
+
+function wmoIcon(code) { return WMO_ICONS[code] || '🌡️'; }
+function wmoDesc(code) { return WMO_DESC[code] || 'Unknown'; }
+function toF(c) { return Math.round(c * 9/5 + 32); }
+
+async function loadWeather(dayNum) {
+  const cfg = DAY_WEATHER[dayNum];
+  const el = document.getElementById('weather' + dayNum);
+  if (!el || el.dataset.loaded) return;
+  el.dataset.loaded = '1';
+
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${cfg.lat}&longitude=${cfg.lng}` +
+      `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max` +
+      `&timezone=America%2FDenver&start_date=${cfg.date}&end_date=${cfg.date}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+    const d = data.daily;
+    const code = d.weather_code[0];
+    const hi   = toF(d.temperature_2m_max[0]);
+    const lo   = toF(d.temperature_2m_min[0]);
+    const rain = d.precipitation_probability_max[0];
+    const wind = Math.round(d.wind_speed_10m_max[0] * 0.621371); // km/h → mph
+
+    el.innerHTML = `
+      <span class="weather-icon">${wmoIcon(code)}</span>
+      <div class="weather-temps">
+        <span class="weather-high">${hi}°F</span>
+        <span class="weather-low">/ ${lo}°F</span>
+      </div>
+      <span class="weather-desc">${wmoDesc(code)}</span>
+      <div class="weather-details">
+        <span class="weather-detail">🌧️ <strong>${rain}%</strong> precip</span>
+        <span class="weather-detail">💨 <strong>${wind} mph</strong> wind</span>
+        <span class="weather-detail">📍 ${cfg.loc}</span>
+      </div>
+    `;
+  } catch(e) {
+    el.innerHTML = `<span class="weather-loading">Weather unavailable</span>`;
+  }
+}
+
 </script>
 </body>
 </html>
